@@ -366,7 +366,7 @@ void MetadataJob::xmlTaskFinished()
                     temporaries.insert(replacement);
                     s.addTemporaryRepositories(temporaries, true);
                 } else {
-                    QHash<QString, QPair<Repository, Repository> > update;
+                    QMultiHash<QString, QPair<Repository, Repository> > update;
                     update.insert(QLatin1String("replace"), qMakePair(original, replacement));
 
                     if (s.updateRepositoryCategories(update) == Settings::UpdatesApplied)
@@ -699,7 +699,7 @@ MetadataJob::Status MetadataJob::parseUpdatesXml(const QList<FileTaskResult> &re
         // search for additional repositories that we might need to check
         const QDomNode repositoryUpdate = root.firstChildElement(QLatin1String("RepositoryUpdate"));
         if (!repositoryUpdate.isNull()) {
-            QHash<QString, QPair<Repository, Repository> > repositoryUpdates =
+            QMultiHash<QString, QPair<Repository, Repository> > repositoryUpdates =
                     searchAdditionalRepositories(repositoryUpdate, result, metadata);
             if (!repositoryUpdates.isEmpty()) {
                 MetadataJob::Status status = setAdditionalRepositories(repositoryUpdates, result, metadata);
@@ -730,8 +730,8 @@ QSet<Repository> MetadataJob::getRepositories()
     foreach (RepositoryCategory repositoryCategory, m_core->settings().repositoryCategories()) {
         if (m_core->isUpdater() || (repositoryCategory.isEnabled())) {
                 foreach (Repository repository, repositoryCategory.repositories()) {
-                    QHashIterator<QString, ArchiveMetadata> i(m_fetchedArchive);
                     bool fetch = true;
+                    QMultiHashIterator<QString, ArchiveMetadata> i(m_fetchedArchive);
                     while (i.hasNext()) {
                         i.next();
                         ArchiveMetadata metaData = i.value();
@@ -786,7 +786,7 @@ bool MetadataJob::parsePackageUpdate(const QDomNodeList &c2, QString &packageNam
     return metaFound;
 }
 
-QHash<QString, QPair<Repository, Repository> > MetadataJob::searchAdditionalRepositories
+QMultiHash<QString, QPair<Repository, Repository> > MetadataJob::searchAdditionalRepositories
     (const QDomNode &repositoryUpdate, const FileTaskResult &result, const Metadata &metadata)
 {
     QMultiHash<QString, QPair<Repository, Repository> > repositoryUpdates;
@@ -835,7 +835,7 @@ QHash<QString, QPair<Repository, Repository> > MetadataJob::searchAdditionalRepo
     return repositoryUpdates;
 }
 
-MetadataJob::Status MetadataJob::setAdditionalRepositories(QHash<QString, QPair<Repository, Repository> > repositoryUpdates,
+MetadataJob::Status MetadataJob::setAdditionalRepositories(QMultiHash<QString, QPair<Repository, Repository> > repositoryUpdates,
                                             const FileTaskResult &result, const Metadata& metadata)
 {
     MetadataJob::Status status = XmlDownloadSuccess;

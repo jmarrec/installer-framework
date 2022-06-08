@@ -748,7 +748,14 @@ void Component::loadLicenses(const QString &directory, const QHash<QString, QVar
                             file.fileName(), file.errorString()));
         }
         QTextStream stream(&file);
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        // Qt5: By default, QTextCodec::codecForLocale() is used, and automatic unicode detection is enabled
         stream.setCodec("UTF-8");
+        #else
+        // This is already the default:
+        // Qt6: By default, QStringConverter::Utf8 is used, and automatic unicode detection is enabled
+        // stream.setEncoding(QStringConverter::Utf8 );
+        #endif
         license.insert(QLatin1String("content"), stream.readAll());
         d->m_licenses.insert(it.key(), license);
     }

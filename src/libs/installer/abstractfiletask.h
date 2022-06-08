@@ -34,6 +34,7 @@
 
 #include <QObject>
 #include <QReadWriteLock>
+#include <QVariant>
 
 namespace QInstaller {
 

@@ -152,13 +152,20 @@ bool CreateDesktopEntryOperation::performOperation()
     setDefaultFilePermissions(filename, DefaultFilePermissions::Executable);
 
     QTextStream stream(&file);
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    // Qt5: By default, QTextCodec::codecForLocale() is used, and automatic unicode detection is enabled
     stream.setCodec("UTF-8");
-    stream << QLatin1String("[Desktop Entry]") << endl;
+    #else
+    // This is already the default:
+    // Qt6: By default, QStringConverter::Utf8 is used, and automatic unicode detection is enabled
+    // stream.setEncoding(QStringConverter::Utf8 );
+    #endif
+    stream << QLatin1String("[Desktop Entry]") << Qt::endl;
 
     // Type=Application\nExec=qtcreator\nPath=...
     const QStringList pairs = values.split(QLatin1Char('\n'));
     for (QStringList::const_iterator it = pairs.begin(); it != pairs.end(); ++it)
-        stream << *it << endl;
+        stream << *it << Qt::endl;
 
     return true;
 }

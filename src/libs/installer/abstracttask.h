@@ -33,6 +33,7 @@
 
 #include <QFutureInterface>
 #include <QException>
+#include <QVariant>
 
 namespace QInstaller {
 

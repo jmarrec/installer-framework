@@ -323,7 +323,11 @@ bool RemoteFileEngine::mkdir(const QString &dirName, bool createParentDirectorie
         return callRemoteMethod<bool>(QString::fromLatin1(Protocol::QAbstractFileEngineMkdir),
             dirName, createParentDirectories);
     }
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     return m_fileEngine.mkdir(dirName, createParentDirectories);
+#else
+    return m_fileEngine.mkdir(dirName, createParentDirectories, std::nullopt);
+#endif
 }
 
 /*!
@@ -332,14 +336,18 @@ bool RemoteFileEngine::mkdir(const QString &dirName, bool createParentDirectorie
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 bool RemoteFileEngine::open(QIODevice::OpenMode mode)
 #else
-bool RemoteFileEngine::open(QIODevice::OpenMode openMode, std::optional<QFile::Permissions> permissions)
+bool RemoteFileEngine::open(QIODevice::OpenMode mode, std::optional<QFile::Permissions> permissions)
 #endif
 {
     if (connectToServer()) {
         return callRemoteMethod<bool>(QString::fromLatin1(Protocol::QAbstractFileEngineOpen),
             static_cast<qint32>(mode | QIODevice::Unbuffered));
     }
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     return m_fileEngine.open(mode | QIODevice::Unbuffered);
+#else
+    return m_fileEngine.open(mode | QIODevice::Unbuffered, std::nullopt);
+#endif
 }
 
 /*!

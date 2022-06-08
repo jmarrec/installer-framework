@@ -209,10 +209,10 @@ bool InstallerCalculator::appendComponentToInstall(Component *component, const Q
                 !dependencyComponent->value(scInstalledVersion).isEmpty()) {
             QRegularExpression compEx(QRegularExpression::anchoredPattern(QLatin1String("([<=>]+)(.*)")));
             QRegularExpressionMatch match = compEx.match(dependencyComponent->value(scInstalledVersion));
-            const QString installedVersion = match.hasMatch() ? compEx.captured(2) : dependencyComponent->value(scInstalledVersion);
+            const QString installedVersion = match.hasMatch() ? match.captured(2) : dependencyComponent->value(scInstalledVersion);
 
             match = compEx.match(requiredVersion);
-            requiredVersion = match.hasMatch() ? compEx.captured(2) : requiredVersion;
+            requiredVersion = match.hasMatch() ? match.captured(2) : requiredVersion;
 
             if (KDUpdater::compareVersion(requiredVersion, installedVersion) >= 1 ) {
                 isUpdateRequired = true;

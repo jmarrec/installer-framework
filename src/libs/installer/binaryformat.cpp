@@ -158,7 +158,12 @@ bool Resource::open()
     if (isOpen())
         return false;
 
-    if (!m_file.open(QIODevice::ReadOnly | QIODevice::Unbuffered)) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    if (!m_file.open(QIODevice::ReadOnly | QIODevice::Unbuffered))
+#else
+    if (!m_file.open(QIODevice::ReadOnly | QIODevice::Unbuffered, std::optional<QFile::Permissions>{}))
+#endif
+    {
         setErrorString(m_file.errorString());
         return false;
     }

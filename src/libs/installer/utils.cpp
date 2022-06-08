@@ -37,6 +37,7 @@
 #include <QProcessEnvironment>
 #include <QThread>
 #include <QVector>
+#include <QElapsedTimer>
 
 #if defined(Q_OS_WIN) || defined(Q_OS_WINCE)
 #   include "qt_windows.h"
@@ -57,7 +58,7 @@
 */
 void QInstaller::uiDetachedWait(int ms)
 {
-    QTime timer;
+    QElapsedTimer timer;
     timer.start();
     do {
         QCoreApplication::processEvents(QEventLoop::AllEvents, ms);

@@ -34,16 +34,17 @@
 #include "qinstallerglobal.h"
 #include "utils.h"
 #include "commandlineparser.h"
+#include "component.h"
 
 #include <QtCore/QHash>
 #include <QtCore/QObject>
+#include <QtCore/QModelIndex>
 #include <QtCore/QStringList>
 #include <QtCore/QVector>
 #include <QSettings>
 
 namespace QInstaller {
 
-class Component;
 class ComponentModel;
 class ScriptEngine;
 class PackageManagerCorePrivate;

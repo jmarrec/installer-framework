@@ -275,8 +275,7 @@ void RemoteServerConnection::handleQProcess(RemoteServerReply *reply, const QStr
         data >> workingDirectory;
 
         qint64 pid = -1;
-        bool success = QInstaller::startDetached(program, arguments, workingDirectory, &pid);
-        reply->send(qMakePair< bool, qint64>(success, pid));
+        reply->send(QPair< bool, qint64>(QInstaller::startDetached(program, arguments, workingDirectory, &pid), -1));
     } else if (command == QLatin1String(Protocol::QProcessSetWorkingDirectory)) {
         QString dir;
         data >> dir;
@@ -300,7 +299,7 @@ void RemoteServerConnection::handleQProcess(RemoteServerReply *reply, const QStr
         qint32 mode;
         data >> program;
         data >> mode;
-        m_process->start(program, static_cast<QIODevice::OpenMode> (mode));
+        m_process->start(program, {}, static_cast<QIODevice::OpenMode> (mode));
     } else if (command == QLatin1String(Protocol::QProcessState)) {
         reply->send(static_cast<qint32> (m_process->state()));
     } else if (command == QLatin1String(Protocol::QProcessTerminate)) {
@@ -484,11 +483,19 @@ void RemoteServerConnection::handleQFSFileEngine(RemoteServerReply *reply, const
         bool createParentDirectories;
         data >>dirName;
         data >>createParentDirectories;
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         reply->send(m_engine->mkdir(dirName, createParentDirectories));
+        #else
+        reply->send(m_engine->mkdir(dirName, createParentDirectories, std::nullopt));
+        #endif
     } else if (command == QLatin1String(Protocol::QAbstractFileEngineOpen)) {
         qint32 openMode;
         data >>openMode;
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         reply->send(m_engine->open(static_cast<QIODevice::OpenMode> (openMode)));
+        #else
+        reply->send(m_engine->open(static_cast<QIODevice::OpenMode> (openMode), std::nullopt));
+        #endif
     } else if (command == QLatin1String(Protocol::QAbstractFileEngineOwner)) {
         qint32 owner;
         data >>owner;
@@ -504,13 +511,13 @@ void RemoteServerConnection::handleQFSFileEngine(RemoteServerReply *reply, const
         data >> maxlen;
         QByteArray byteArray(maxlen, '\0');
         const qint64 r = m_engine->read(byteArray.data(), maxlen);
-        reply->send(qMakePair<qint64, QByteArray>(r, byteArray));
+        reply->send(QPair<qint64, QByteArray>(r, byteArray));
     } else if (command == QLatin1String(Protocol::QAbstractFileEngineReadLine)) {
         qint64 maxlen;
         data >> maxlen;
         QByteArray byteArray(maxlen, '\0');
         const qint64 r = m_engine->readLine(byteArray.data(), maxlen);
-        reply->send(qMakePair<qint64, QByteArray>(r, byteArray));
+        reply->send(QPair<qint64, QByteArray>(r, byteArray));
     } else if (command == QLatin1String(Protocol::QAbstractFileEngineRemove)) {
         reply->send(m_engine->remove());
     } else if (command == QLatin1String(Protocol::QAbstractFileEngineRename)) {

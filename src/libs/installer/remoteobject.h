@@ -37,6 +37,7 @@
 #include <QDataStream>
 #include <QObject>
 #include <QLocalSocket>
+#include <QVariant>
 
 namespace QInstaller {
 

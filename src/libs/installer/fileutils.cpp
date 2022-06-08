@@ -90,7 +90,7 @@ TempDirDeleter::~TempDirDeleter()
 
 QStringList TempDirDeleter::paths() const
 {
-    return m_paths.toList();
+    return m_paths.values();
 }
 
 void TempDirDeleter::add(const QString &path)
@@ -681,7 +681,7 @@ quint64 QInstaller::fileSize(const QFileInfo &info)
 bool QInstaller::isInBundle(const QString &path, QString *bundlePath)
 {
 #ifdef Q_OS_MACOS
-    QFileInfo fi = QFileInfo(path).absoluteFilePath();
+    QFileInfo fi(QFileInfo(path).absoluteFilePath());
     while (!fi.isRoot()) {
         if (fi.isBundle()) {
             if (bundlePath)

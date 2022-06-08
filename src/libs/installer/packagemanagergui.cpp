@@ -80,7 +80,6 @@
 #include <QShowEvent>
 #include <QFileDialog>
 #include <QGroupBox>
-#include <QDesktopWidget>
 
 #ifdef Q_OS_WIN
 # include <qt_windows.h>
@@ -446,7 +445,8 @@ PackageManagerGui::PackageManagerGui(PackageManagerCore *core, QWidget *parent)
 */
 void PackageManagerGui::setMaxSize()
 {
-    QSize size = qApp->desktop()->availableGeometry(this).size();
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QSize size = screen->size();
     int windowFrameHeight = frameGeometry().height() - geometry().height();
     int availableHeight = size.height() - windowFrameHeight;
 

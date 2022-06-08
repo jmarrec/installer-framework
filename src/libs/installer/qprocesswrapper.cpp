@@ -284,26 +284,26 @@ QByteArray QProcessWrapper::readAllStandardError()
     return process.readAllStandardError();
 }
 
-void QProcessWrapper::start(const QString &param1, const QStringList &param2,
-    QIODevice::OpenMode param3)
+void QProcessWrapper::start(const QString &program, const QStringList &argumentList,
+    QIODevice::OpenMode mode)
 {
     if (connectToServer()) {
         m_lock.lockForWrite();
-        callRemoteMethod(QLatin1String(Protocol::QProcessStart3Arg), param1, param2, param3);
+        callRemoteMethod(QLatin1String(Protocol::QProcessStart3Arg), program, argumentList, mode);
         m_lock.unlock();
     } else {
-        process.start(param1, param2, param3);
+        process.start(program, argumentList, mode);
     }
 }
 
-void QProcessWrapper::start(const QString &param1, QIODevice::OpenMode param2)
+void QProcessWrapper::start(const QString &program, QIODevice::OpenMode mode)
 {
     if (connectToServer()) {
         m_lock.lockForWrite();
-        callRemoteMethod(QLatin1String(Protocol::QProcessStart2Arg), param1, param2);
+        callRemoteMethod(QLatin1String(Protocol::QProcessStart2Arg), program, mode);
         m_lock.unlock();
     } else {
-        process.start(param1, param2);
+        process.start(program, {}, mode);
     }
 }
 

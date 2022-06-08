@@ -33,6 +33,7 @@
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QList>
+#include <QtCore/QModelIndex>
 #include <QtCore/QSet>
 #include <QtCore/QVector>
 

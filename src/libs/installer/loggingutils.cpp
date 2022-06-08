@@ -33,6 +33,7 @@
 #include "fileutils.h"
 #include "remoteclient.h"
 #include "remotefileengine.h"
+#include "packagemanagercore.h"
 
 #include <QXmlStreamWriter>
 #include <QElapsedTimer>

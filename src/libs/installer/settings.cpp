@@ -53,7 +53,7 @@ using namespace QInstaller;
 /*!
     \typedef QInstaller::RepoHash
 
-    Synonym for QHash<QString, QPair<Repository, Repository> >. Describes a repository
+    Synonym for QMultiHash<QString, QPair<Repository, Repository> >. Describes a repository
     update with the supported key strings being \e{replace}, \e{remove}, and \e{add}.
 */
 

@@ -36,6 +36,7 @@
 #include <QDir>
 #include <QRegularExpression>
 #include <QSettings>
+#include <QStandardPaths>
 
 #ifdef Q_OS_WIN
 # include <windows.h>
@@ -293,14 +294,13 @@ QString PackageManagerCoreData::replaceVariables(const QString &str) const
 
 QByteArray PackageManagerCoreData::replaceVariables(const QByteArray &ba) const
 {
-    static const QChar at = QLatin1Char('@');
     QByteArray res;
     int pos = 0;
     while (true) {
-        const int pos1 = ba.indexOf(at, pos);
+        const int pos1 = ba.indexOf('@', pos);
         if (pos1 == -1)
             break;
-        const int pos2 = ba.indexOf(at, pos1 + 1);
+        const int pos2 = ba.indexOf('@', pos1 + 1);
         if (pos2 == -1)
             break;
         res += ba.mid(pos, pos1 - pos);
