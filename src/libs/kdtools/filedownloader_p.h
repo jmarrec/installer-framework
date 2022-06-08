@@ -34,6 +34,7 @@
 
 #include <QtNetwork/QNetworkReply>
 #include <QNetworkAccessManager>
+#include <QNetworkInformation>
 
 // these classes are not a part of the public API
 
@@ -130,7 +131,7 @@ private Q_SLOTS:
     void httpDone(bool error);
     void httpReqFinished();
     void onAuthenticationRequired(QNetworkReply *reply, QAuthenticator *authenticator);
-    void onNetworkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility accessible);
+    void onReachabilityChanged(QNetworkInformation::Reachability reachability);
 #ifndef QT_NO_SSL
     void onSslErrors(QNetworkReply* reply, const QList<QSslError> &errors);
 #endif

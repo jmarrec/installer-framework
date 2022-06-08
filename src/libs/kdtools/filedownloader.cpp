@@ -1191,7 +1191,7 @@ struct KDUpdater::HttpDownloader::Private
             disconnect(http, &QNetworkReply::finished, q, &HttpDownloader::httpReqFinished);
             disconnect(http, &QNetworkReply::downloadProgress,
                        q, &HttpDownloader::httpReadProgress);
-            void (QNetworkReply::*errorSignal)(QNetworkReply::NetworkError) = &QNetworkReply::error;
+            void (QNetworkReply::*errorSignal)(QNetworkReply::NetworkError) = &QNetworkReply::errorOccurred;
 
             disconnect(http, errorSignal, q, &HttpDownloader::httpError);
             http->deleteLater();
@@ -1219,8 +1219,8 @@ KDUpdater::HttpDownloader::HttpDownloader(QObject *parent)
 #endif
     connect(&d->manager, &QNetworkAccessManager::authenticationRequired,
             this, &HttpDownloader::onAuthenticationRequired);
-    connect(&d->manager, &QNetworkAccessManager::networkAccessibleChanged,
-            this, &HttpDownloader::onNetworkAccessibleChanged);
+    connect(QNetworkInformation::instance(), &QNetworkInformation::reachabilityChanged,
+            this, &HttpDownloader::onReachabilityChanged);
 
 }
 
@@ -1480,7 +1480,7 @@ void KDUpdater::HttpDownloader::startDownload(const QUrl &url)
     connect(d->http, &QNetworkReply::downloadProgress,
             this, &HttpDownloader::httpReadProgress);
     connect(d->http, &QNetworkReply::finished, this, &HttpDownloader::httpReqFinished);
-    void (QNetworkReply::*errorSignal)(QNetworkReply::NetworkError) = &QNetworkReply::error;
+    void (QNetworkReply::*errorSignal)(QNetworkReply::NetworkError) = &QNetworkReply::errorOccurred;
     connect(d->http, errorSignal, this, &HttpDownloader::httpError);
 
     if (d->destFileName.isEmpty()) {
@@ -1517,7 +1517,7 @@ void KDUpdater::HttpDownloader::resumeDownload()
     connect(d->http, &QNetworkReply::downloadProgress,
             this, &HttpDownloader::httpReadProgress);
     connect(d->http, &QNetworkReply::finished, this, &HttpDownloader::httpReqFinished);
-    void (QNetworkReply::*errorSignal)(QNetworkReply::NetworkError) = &QNetworkReply::error;
+    void (QNetworkReply::*errorSignal)(QNetworkReply::NetworkError) = &QNetworkReply::errorOccurred;
     connect(d->http, errorSignal, this, &HttpDownloader::httpError);
     runDownloadSpeedTimer();
     runDownloadDeadlineTimer();
@@ -1560,18 +1560,19 @@ void KDUpdater::HttpDownloader::onAuthenticationRequired(QNetworkReply *reply, Q
     }
 }
 
-void KDUpdater::HttpDownloader::onNetworkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility accessible)
+void KDUpdater::HttpDownloader::onReachabilityChanged(QNetworkInformation::Reachability reachability)
 {
-  if (accessible == QNetworkAccessManager::NotAccessible) {
-      d->shutDown(false);
-      setDownloadPaused(true);
-      setDownloadResumed(false);
-      stopDownloadDeadlineTimer();
-  } else if (accessible == QNetworkAccessManager::Accessible) {
+
+  if (reachability == QNetworkInformation::Reachability::Online) {
       if (isDownloadPaused()) {
           setDownloadPaused(false);
           resumeDownload();
       }
+  } else if (reachability != QNetworkInformation::Reachability::Unknown) {
+      d->shutDown(false);
+      setDownloadPaused(true);
+      setDownloadResumed(false);
+      stopDownloadDeadlineTimer();
   }
 }
 
