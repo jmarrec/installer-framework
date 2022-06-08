@@ -1299,8 +1299,8 @@ PackageManagerCore::PackageManagerCore(qint64 magicmaker, const QList<OperationB
     QSet<QString> packagesWithoutOperation = installedPackages - operationPackages;
     QSet<QString> orphanedOperations = operationPackages - installedPackages;
     if (!packagesWithoutOperation.isEmpty() || !orphanedOperations.isEmpty())  {
-        qCritical() << "Operations missing for installed packages" << packagesWithoutOperation.toList();
-        qCritical() << "Orphaned operations" << orphanedOperations.toList();
+        qCritical() << "Operations missing for installed packages" << packagesWithoutOperation.values();
+        qCritical() << "Orphaned operations" << orphanedOperations.values();
         qCritical() << "Your installation seems to be corrupted. Please consider re-installing from scratch, "
                        "remove the packages from components.xml which operations are missing, "
                        "or reinstall the packages.";
@@ -2259,7 +2259,7 @@ bool PackageManagerCore::calculateComponentsToUninstall() const
 */
 QList<Component *> PackageManagerCore::componentsToUninstall() const
 {
-    return d->uninstallerCalculator()->componentsToUninstall().toList();
+    return d->uninstallerCalculator()->componentsToUninstall().values();
 }
 
 /*!
@@ -3306,8 +3306,8 @@ bool PackageManagerCore::versionMatches(const QString &version, const QString &r
     QString ver = requirement;
     QRegularExpressionMatch match = compEx.match(requirement);
     if (match.hasMatch()) {
-      comparator = compEx.captured(1);
-      ver = compEx.captured(2);
+      comparator = match.captured(1);
+      ver = match.captured(2);
     }
 
     const bool allowEqual = comparator.contains(QLatin1Char('='));
@@ -4358,8 +4358,8 @@ void PackageManagerCore::createAutoTreeNames(QHash<QString, Component *> &compon
             if (!(parent && parent->treeNameMoveChildren()))
                 continue; // TreeName only applied to parent
 
-            if (newName.split(QLatin1Char('.'), QString::SkipEmptyParts).count()
-                    > name.split(QLatin1Char('.'), QString::SkipEmptyParts).count()) {
+            if (newName.split(QLatin1Char('.'), Qt::SkipEmptyParts).count()
+                    > name.split(QLatin1Char('.'), Qt::SkipEmptyParts).count()) {
                 continue;
             }
             newName = name;
