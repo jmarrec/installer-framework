@@ -2052,7 +2052,7 @@ QList<Component *> PackageManagerCore::components(ComponentTypes mask, const QSt
         QRegularExpression re(regexp);
         QList<Component*>::iterator iter = components.begin();
         while (iter != components.end()) {
-            if (!re.match(iter.i->t()->name()).hasMatch())
+            if (!re.match((*iter)->name()).hasMatch())
                 iter = components.erase(iter);
             else
                 iter++;
