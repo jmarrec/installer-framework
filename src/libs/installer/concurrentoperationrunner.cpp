@@ -155,8 +155,9 @@ QHash<Operation *, bool> ConcurrentOperationRunner::run()
         connect(futureWatcher, &QFutureWatcher<bool>::finished,
             this, &ConcurrentOperationRunner::onOperationfinished);
 
-        futureWatcher->setFuture(QtConcurrent::run(m_threadPool,
-            this, &ConcurrentOperationRunner::runOperation, operation));
+        QFuture<bool> future = QtConcurrent::run(m_threadPool,
+            &ConcurrentOperationRunner::runOperation, this, operation);
+        futureWatcher->setFuture(future);
     }
 
     if (!m_operationWatchers.isEmpty()) {
