@@ -54,7 +54,7 @@
 #include <QtConcurrentRun>
 
 #include <QtCore/QMutex>
-#include <QtCore/QRegExp>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QTextCodec>
@@ -3301,9 +3301,14 @@ bool PackageManagerCore::performOperation(const QString &name, const QStringList
 */
 bool PackageManagerCore::versionMatches(const QString &version, const QString &requirement)
 {
-    QRegExp compEx(QLatin1String("([<=>]+)(.*)"));
-    const QString comparator = compEx.exactMatch(requirement) ? compEx.cap(1) : QLatin1String("=");
-    const QString ver = compEx.exactMatch(requirement) ? compEx.cap(2) : requirement;
+    QRegularExpression compEx(QRegularExpression::anchoredPattern(QLatin1String("([<=>]+)(.*)")));
+    QString comparator = QLatin1String("=");
+    QString ver = requirement;
+    QRegularExpressionMatch match = compEx.match(requirement);
+    if (match.hasMatch()) {
+      comparator = compEx.captured(1);
+      ver = compEx.captured(2);
+    }
 
     const bool allowEqual = comparator.contains(QLatin1Char('='));
     const bool allowLess = comparator.contains(QLatin1Char('<'));

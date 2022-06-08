@@ -42,7 +42,7 @@
 #include "updater.h"
 
 #include <QtCore/QDirIterator>
-#include <QtCore/QRegExp>
+#include <QtCore/QRegularExpression>
 
 #include <QtXml/QDomDocument>
 #include <QTemporaryDir>
@@ -517,7 +517,7 @@ PackageInfoVector QInstallerTools::createListOfPackages(const QStringList &packa
         info.version = packageElement.firstChildElement(QLatin1String("Version")).text();
         // Version cannot start with comparison characters, be an empty string
         // or have whitespaces at the beginning or at the end
-        if (!QRegExp(QLatin1String("(?![<=>\\s]+)(.+)")).exactMatch(info.version) ||
+        if (!QRegularExpression(QRegularExpression::anchoredPattern(QLatin1String("(?![<=>\\s]+)(.+)"))).match(info.version).hasMatch() ||
                 (info.version != info.version.trimmed())) {
             if (ignoreInvalidPackages)
                 continue;

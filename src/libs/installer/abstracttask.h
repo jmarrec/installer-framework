@@ -32,6 +32,7 @@
 #include "runextensions.h"
 
 #include <QFutureInterface>
+#include <QException>
 
 namespace QInstaller {
 

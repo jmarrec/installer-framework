@@ -43,7 +43,7 @@
 #include <productkeycheck.h>
 
 #include <QtCore/QDirIterator>
-#include <QtCore/QRegExp>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QTranslator>
 #include <QtCore/QRegularExpression>
 
@@ -965,7 +965,7 @@ QStringList Component::archives() const
     QString pathString = QString::fromLatin1("installer://%1/").arg(name());
     QStringList archivesNameList = QDir(pathString).entryList();
     //RegExp "^" means line beginning
-    archivesNameList.replaceInStrings(QRegExp(QLatin1String("^")), pathString);
+    archivesNameList.replaceInStrings(QRegularExpression(QLatin1String("^")), pathString);
     return archivesNameList;
 }
 

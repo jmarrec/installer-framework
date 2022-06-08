@@ -40,6 +40,7 @@
 #include <QtCore/QThread>
 #include <QtCore/QUrl>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QRegularExpression>
 #include <QImageReader>
 #include <QRandomGenerator>
 #include <QGuiApplication>
@@ -811,7 +812,7 @@ void QInstaller::copyConfigChildElements(QDomDocument &dom, const QDomNodeList &
         // Filename may also contain a path relative to source directory but we
         // copy it strictly into target directory without extra paths
         const QString newName = domElement.text()
-            .replace(QRegExp(QLatin1String("\\\\|/|\\.|:")), QLatin1String("_"));
+            .replace(QRegularExpression(QLatin1String("\\\\|/|\\.|:")), QLatin1String("_"));
 
         const QString targetFile = targetDir + QDir::separator() + newName;
         const QFileInfo elementFileInfo = QFileInfo(sourceDir, domElement.text());

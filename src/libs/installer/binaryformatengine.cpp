@@ -28,7 +28,7 @@
 
 #include "binaryformatengine.h"
 
-#include <QRegExp>
+#include <QRegularExpression>
 
 namespace {
 
@@ -263,15 +263,15 @@ QStringList BinaryFormatEngine::entryList(QDir::Filters filters, const QStringLi
     if (filterNames.isEmpty())
         return result;
 
-    QList<QRegExp> regexps;
+    QList<QRegularExpression> regexps;
     foreach (const QString &i, filterNames)
-        regexps.append(QRegExp(i, Qt::CaseInsensitive, QRegExp::Wildcard));
+        regexps.append(QRegularExpression(QRegularExpression::wildcardToRegularExpression(i), QRegularExpression::CaseInsensitiveOption));
 
     QStringList entries;
     foreach (const QString &i, result) {
         bool matched = false;
-        foreach (const QRegExp &reg, regexps) {
-            matched = reg.exactMatch(i);
+        foreach (const QRegularExpression &reg, regexps) {
+            matched = reg.match(i).hasMatch();
             if (matched)
                 break;
         }
