@@ -39,6 +39,9 @@ QT += \
     widgets \
     core-private \
     qml-private
+
+greaterThan(QT_MAJOR_VERSION,5):QT += core5compat
+
 win32:QT += winextras
 
 HEADERS += packagemanagercore.h \

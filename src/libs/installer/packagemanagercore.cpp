@@ -57,9 +57,16 @@
 #include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
 #include <QtCore/QTemporaryFile>
-#include <QtCore/QTextCodec>
-#include <QtCore/QTextDecoder>
-#include <QtCore/QTextEncoder>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    #include <QtCore/QTextCodec>
+    #include <QtCore/QTextDecoder>
+    #include <QtCore/QTextEncoder>
+#else
+    #include <QtCore5Compat/QTextCodec>
+    #include <QtCore5Compat/QTextDecoder>
+    #include <QtCore5Compat/QTextEncoder>
+#endif
+
 #include <QtCore/QTextStream>
 
 #include <QDesktopServices>
@@ -1017,13 +1024,11 @@ QString PackageManagerCore::readFile(const QString &filePath, const QString &cod
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
         return QString();
 
-    QTextCodec *codec = QTextCodec::codecForName(qPrintable(codecName));
-    if (!codec)
+    QStringDecoder decoder(qPrintable(codecName));
+    if (!decoder.isValid())
         return QString();
 
-    QTextStream stream(&f);
-    stream.setCodec(codec);
-    return stream.readAll();
+    return decoder.decode(f.readAll());
 }
 
 /*!
