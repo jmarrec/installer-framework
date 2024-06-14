@@ -489,6 +489,28 @@ static int assemble(Input input, const QInstaller::Settings &settings, const Bin
         }
 
         qDebug() << "done.";
+    } else if (isBundle && !args.signingScriptCmd.isEmpty()) {
+        qDebug() << "Signing .app bundle with script: " << args.signingScriptCmd;
+
+        QProcess p;
+        p.start(args.signingScriptCmd);
+
+        if (!p.waitForFinished(-1)) {
+            qCritical("Failed to sign app bundle: error while running '%s %s': %s",
+                      p.program().toUtf8().constData(),
+                      p.arguments().join(QLatin1Char(' ')).toUtf8().constData(),
+                      p.errorString().toUtf8().constData());
+            return EXIT_FAILURE;
+        }
+
+        if (p.exitStatus() == QProcess::NormalExit) {
+            if (p.exitCode() != 0) {
+                qCritical("Failed to sign app bundle: running codesign failed "
+                          "with exit code %d: %s", p.exitCode(),
+                          p.readAllStandardError().constData());
+                return EXIT_FAILURE;
+            }
+        }
     }
 
     bundleBackup.release();

@@ -78,6 +78,7 @@ static void printUsage()
     std::cout << "  -s|--sign identity        Sign generated app bundle using the given code " << std::endl;
     std::cout << "                            signing identity" << std::endl;
     std::cout << "  --sign-options options    Sign app bundle via code signing OPTION FLAGS (codesign --options)" << std::endl;
+    std::cout << "  --sign-script script      Instead of letting binarycreator call codesign, you can provide an executable script path." << std::endl;
 #endif
     std::cout << "  --af|--archive-format " << archiveFormats << std::endl;
     std::cout << "                            Set the format used when packaging new component data archives. If" << std::endl;
@@ -228,6 +229,11 @@ int main(int argc, char **argv)
             if (it == args.end() || it->startsWith(QLatin1String("-")))
                 return printErrorAndUsageAndExit(QString::fromLatin1("Error: No code signing OPTION FLAGS specified."));
             parsedArgs.signingOptions = *it;
+        } else if (*it == QLatin1String("--sign-script")) {
+            ++it;
+            if (it == args.end() || it->startsWith(QLatin1String("-")))
+                return printErrorAndUsageAndExit(QString::fromLatin1("Error: No code signing script specified."));
+            parsedArgs.signingScriptCmd = *it;
 #endif
         } else {
             if (it->startsWith(QLatin1String("-"))) {
@@ -245,6 +251,9 @@ int main(int argc, char **argv)
 
     if (parsedArgs.signingIdentity.isEmpty() && !parsedArgs.signingOptions.isEmpty()) {
         return printErrorAndUsageAndExit(QString::fromLatin1("Error: When --sign-options is specificy, you must use --sign"));
+    }
+    if (!parsedArgs.signingScriptCmd.isEmpty() && (!parsedArgs.signingIdentity.isEmpty() || !parsedArgs.signingOptions.isEmpty())) {
+        return printErrorAndUsageAndExit(QString::fromLatin1("Error: --sign-script excludes --sign and --sign-options"));
     }
 
     QString errorMsg;
