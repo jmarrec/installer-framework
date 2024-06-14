@@ -77,6 +77,7 @@ static void printUsage()
     std::cout << "                            can be configured in the config.xml using element <MaintenanceToolName>." << std::endl;
     std::cout << "  -s|--sign identity        Sign generated app bundle using the given code " << std::endl;
     std::cout << "                            signing identity" << std::endl;
+    std::cout << "  --sign-options options    Sign app bundle via code signing OPTION FLAGS (codesign --options)" << std::endl;
 #endif
     std::cout << "  --af|--archive-format " << archiveFormats << std::endl;
     std::cout << "                            Set the format used when packaging new component data archives. If" << std::endl;
@@ -222,6 +223,11 @@ int main(int argc, char **argv)
             if (it == args.end() || it->startsWith(QLatin1String("-")))
                 return printErrorAndUsageAndExit(QString::fromLatin1("Error: No code signing identity specified."));
             parsedArgs.signingIdentity = *it;
+        } else if (*it == QLatin1String("--sign-options")) {
+            ++it;
+            if (it == args.end() || it->startsWith(QLatin1String("-")))
+                return printErrorAndUsageAndExit(QString::fromLatin1("Error: No code signing OPTION FLAGS specified."));
+            parsedArgs.signingOptions = *it;
 #endif
         } else {
             if (it->startsWith(QLatin1String("-"))) {
@@ -235,6 +241,10 @@ int main(int argc, char **argv)
                     .arg(*it));
             }
         }
+    }
+
+    if (parsedArgs.signingIdentity.isEmpty() && !parsedArgs.signingOptions.isEmpty()) {
+        return printErrorAndUsageAndExit(QString::fromLatin1("Error: When --sign-options is specificy, you must use --sign"));
     }
 
     QString errorMsg;

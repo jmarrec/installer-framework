@@ -453,11 +453,20 @@ static int assemble(Input input, const QInstaller::Settings &settings, const Bin
         qDebug() << "Signing .app bundle...";
 
         QProcess p;
-        p.start(QLatin1String("codesign"),
-                QStringList() << QLatin1String("--force")
-                              << QLatin1String("--deep")
-                              << QLatin1String("--sign") << args.signingIdentity
-                              << bundle);
+        QStringList codesign_args;
+        codesign_args << QLatin1String("--force")
+                      << QLatin1String("--deep")
+                      << QLatin1String("--timestamp");
+
+        if (!args.signingOptions.isEmpty()) {
+          codesign_args << QLatin1String("--option") << args.signingOptions
+                        << QLatin1String("-vvvv");
+        }
+
+        codesign_args << QLatin1String("--sign") << args.signingIdentity
+                      << bundle;
+
+        p.start(QLatin1String("codesign"), codesign_args);
 
         if (!p.waitForFinished(-1)) {
             qCritical("Failed to sign app bundle: error while running '%s %s': %s",

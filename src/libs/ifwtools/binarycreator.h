@@ -68,6 +68,7 @@ struct IFWTOOLS_EXPORT BinaryCreatorArgs
     FilterType ftype = QInstallerTools::Exclude;
     bool compileResource = false;
     QString signingIdentity;
+    QString signingOptions;
     bool createMaintenanceTool = false;
 };
 
