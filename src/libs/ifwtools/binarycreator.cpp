@@ -461,6 +461,9 @@ static int assemble(Input input, const QInstaller::Settings &settings, const Bin
         if (!args.signingOptions.isEmpty()) {
           codesign_args << QLatin1String("--option") << args.signingOptions
                         << QLatin1String("-vvvv");
+        } else {
+          codesign_args << QLatin1String("--option") << QLatin1String("runtime")
+                        << QLatin1String("-vvvv");
         }
 
         codesign_args << QLatin1String("--sign") << args.signingIdentity
