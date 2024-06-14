@@ -70,6 +70,7 @@ struct IFWTOOLS_EXPORT BinaryCreatorArgs
     bool compileResource = false;
     QString signingIdentity;
     QString signingOptions;
+    QString signingScriptCmd;
     bool createMaintenanceTool = false;
 };
 
