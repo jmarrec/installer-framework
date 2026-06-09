@@ -147,6 +147,7 @@ win32:CONFIG += console
 
 exists(".git") {
     GIT_SHA1 = $$system(git rev-list --abbrev-commit -n1 HEAD)
+    GIT_BRANCH = $$system(git rev-parse --abbrev-ref --symbolic-full-name @{u})
 }
 
 isEmpty(GIT_SHA1) {
@@ -156,6 +157,7 @@ isEmpty(GIT_SHA1) {
 
 DEFINES += NOMINMAX QT_NO_CAST_FROM_ASCII QT_STRICT_ITERATORS QT_USE_QSTRINGBUILDER \
            "_GIT_SHA1_=$$GIT_SHA1" \
+           "_GIT_BRANCH_=$$GIT_BRANCH" \
            IFW_VERSION_STR=$$IFW_VERSION_STR \
            IFW_VERSION=$$IFW_VERSION \
            IFW_VERSION_STR_WIN32=$$IFW_VERSION_STR_WIN32 \

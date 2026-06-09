@@ -36,6 +36,7 @@
 #define VERSION "IFW Version: " QUOTE(IFW_VERSION_STR) ", built with Qt " QT_VERSION_STR "."
 #define BUILDDATE "Build date: " __DATE__
 #define SHA "Installer Framework SHA1: " QUOTE(_GIT_SHA1_)
+#define BRANCH "Installer Framework branch: " QUOTE(_GIT_BRANCH_)
 static const char PLACEHOLDER[32] = "MY_InstallerCreateDateTime_MY";
 
 #if defined Q_OS_WIN || defined Q_OS_MACOS
@@ -161,7 +162,7 @@ int main(int argc, char *argv[])
         QCoreApplication app(argc, argv);
 
         if (parser.isSet(CommandLineOptions::scVersionLong)) {
-            std::cout << VERSION << std::endl << BUILDDATE << std::endl << SHA << std::endl;
+            std::cout << VERSION << std::endl << BUILDDATE << std::endl << SHA << std::endl << BRANCH << std::endl;
             std::cout << "Libarchive version: " << archive_version_details() << std::endl;
             const QDateTime dateTime = QDateTime::fromString(QLatin1String(PLACEHOLDER),
                 QLatin1String("yyyy-MM-dd - HH:mm:ss"));
@@ -317,7 +318,7 @@ int main(int argc, char *argv[])
             return CommandLineInterface(argc, argv).clearLocalCache();
         }
         if (QInstaller::LoggingHandler::instance().isVerbose()) {
-            std::cout << VERSION << std::endl << BUILDDATE << std::endl << SHA << std::endl;
+            std::cout << VERSION << std::endl << BUILDDATE << std::endl << SHA << std::endl << BRANCH << std::endl;
         } else {
 #ifdef Q_OS_WIN
             // Check if installer is started from console. If so, restart the installer so it
