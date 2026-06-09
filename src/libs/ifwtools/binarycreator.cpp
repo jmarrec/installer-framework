@@ -440,10 +440,10 @@ static int assemble(Input input, const QInstaller::Settings &settings, const Bin
                       << QLatin1String("--timestamp");
 
         if (!args.signingOptions.isEmpty()) {
-          codesign_args << QLatin1String("--option") << args.signingOptions
+          codesign_args << QLatin1String("--options") << args.signingOptions
                         << QLatin1String("-vvvv");
         } else {
-          codesign_args << QLatin1String("--option") << QLatin1String("runtime")
+          codesign_args << QLatin1String("--options") << QLatin1String("runtime")
                         << QLatin1String("-vvvv");
         }
 
